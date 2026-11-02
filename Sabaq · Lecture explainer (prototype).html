@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sabaq · Lecture explainer (prototype)</title>
+<style>
+:root{--bg:#f8f7fb;--panel:#fff;--side:#f0edf7;--ink:#1e1830;--mute:#6a6280;--line:#e0dcec;--acc:#6d3fc7;--acc-ink:#fff;--soft:#e8e0f8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17121f;--panel:#1f182b;--side:#120e19;--ink:#ece8f4;--mute:#a299b8;--line:#352b49;--acc:#b69af0;--acc-ink:#1a1030;--soft:#2c2140}}
+:root[data-theme="dark"]{--bg:#17121f;--panel:#1f182b;--side:#120e19;--ink:#ece8f4;--mute:#a299b8;--line:#352b49;--acc:#b69af0;--acc-ink:#1a1030;--soft:#2c2140}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 "Inter",system-ui,-apple-system,"Segoe UI",sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.app{display:grid;grid-template-columns:280px 1fr;height:100%}
+aside{background:var(--side);border-right:1px solid var(--line);padding:20px 14px;overflow-y:auto}
+.brand{font-weight:650;font-size:17px;padding:0 8px 4px}
+.brand small{display:block;font-weight:400;color:var(--mute);font-size:13px}
+.side-h{margin:22px 8px 8px;font-size:13px;color:var(--mute)}
+.folder{margin-bottom:2px}
+.fbtn{width:100%;display:flex;align-items:center;gap:10px;text-align:left;background:none;border:0;padding:8px;border-radius:8px}
+.fbtn:hover,.fbtn.on{background:var(--soft)}
+.fbtn svg{flex:none;width:18px;height:18px;stroke:var(--acc);fill:none;stroke-width:1.8}
+.fbtn .n{margin-left:auto;color:var(--mute);font-size:13px}
+.items{margin:2px 0 6px 36px;display:none}
+.folder.open .items{display:block}
+.item{display:block;width:100%;text-align:left;background:none;border:0;padding:5px 8px;border-radius:6px;color:var(--mute);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item:hover{color:var(--ink);background:var(--soft)}
+.newf{display:flex;gap:6px;margin:10px 8px 0}
+.newf input{flex:1;min-width:0;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font:inherit;font-size:14px}
+.btn{background:var(--acc);color:var(--acc-ink);border:0;border-radius:8px;padding:8px 14px;font-weight:600}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+main{overflow-y:auto;padding:36px clamp(18px,5vw,64px) 60px}
+.wrap{max-width:720px;margin:0 auto}
+h1{font-size:clamp(26px,4vw,34px);line-height:1.2;margin:0 0 6px;letter-spacing:-.01em}
+.sub{color:var(--mute);margin:0 0 24px}
+.drop{border:1.5px dashed var(--line);background:var(--panel);border-radius:14px;padding:34px 20px;text-align:center;transition:border-color .15s,background .15s}
+.drop.over{border-color:var(--acc);background:var(--soft)}
+.drop p{margin:0 0 4px}
+.drop .hint{color:var(--mute);font-size:14px;margin-bottom:16px}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.target{margin:0 0 14px;color:var(--mute);font-size:14px}
+.target b{color:var(--ink)}
+.prog{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:14px 0}
+.bar i{display:block;height:100%;width:0;background:var(--acc);transition:width .5s}
+.steps{margin:0;padding:0;list-style:none;color:var(--mute);font-size:15px}
+.steps li{padding:3px 0}
+.steps li.done{color:var(--ink)}
+.steps li.done::before{content:"✓ ";color:var(--acc)}
+.res h2{font-size:19px;margin:30px 0 8px}
+.res p{margin:0 0 10px}
+.tag{display:inline-block;background:var(--soft);color:var(--ink);border-radius:999px;padding:2px 12px;font-size:14px;margin:0 6px 6px 0}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+dl{margin:0}dt{font-weight:600;margin-top:10px}dd{margin:0;color:var(--mute)}
+.q{border-top:1px solid var(--line);padding:12px 0}
+.q:first-child{border-top:0}
+.q .a{display:none;color:var(--mute);margin-top:6px}
+.q.show .a{display:block}
+.q button{margin-top:6px;background:none;border:0;color:var(--acc);padding:0;font-weight:600}
+.bar-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:10px}
+.note{margin-top:28px;color:var(--mute);font-size:13px}
+.menu{display:none}
+@media (max-width:800px){
+.app{grid-template-columns:1fr;grid-template-rows:auto 1fr}
+aside{border-right:0;border-bottom:1px solid var(--line);max-height:44vh;padding:12px}
+main{padding-top:22px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <div class="brand"> 
+    <img src="sabaq-logo-wordmark.svg" alt="Sabaq" style="height: 32px; display: block; margin-bottom: 4px;">
+  <div class="side-h">Your topics</div>
+  <div id="folders"></div>
+  <form class="newf" id="newForm">
+    <input id="newName" placeholder="New topic folder" aria-label="New topic folder name" maxlength="30">
+    <button class="btn ghost" type="submit">Add</button>
+  </form>
+</aside>
+<main>
+<div class="wrap" id="view"></div>
+</main>
+</div>
+
+<script>
+var SAMPLES={
+"Computer Science":{title:"Database normalization",summary:"Normalization is a way of organizing a database so each fact is stored only once. This avoids duplicate data and mistakes when you update or delete records.",simple:"Imagine a school spreadsheet where every row repeats the teacher’s phone number. If the number changes, you must fix it in 200 places. Normalization moves the phone number into a separate Teachers table and links to it. Change it once, and every row is correct.",terms:[["Primary key","A column that uniquely identifies each row, like a student ID."],["1NF","Every cell holds one value, with no lists inside a cell."],["2NF","Every non-key column depends on the whole key, not just part of it."],["3NF","Non-key columns depend only on the key, not on each other."]],qs:[["Why do we normalize a database?","To remove duplicated data and prevent update, insert and delete errors."],["A cell contains “Math, Physics”. Which normal form is broken?","First normal form (1NF), because the cell holds more than one value."],["What does a primary key guarantee?","That each row can be identified by a unique value."]]},
+"Biology":{title:"Photosynthesis",summary:"Photosynthesis is how plants turn light, water and carbon dioxide into sugar and oxygen. It happens in two linked stages inside the chloroplast.",simple:"Think of a leaf as a tiny solar-powered kitchen. The light reactions capture sunlight and store it as chemical energy. The Calvin cycle then uses that energy to build sugar from carbon dioxide in the air.",terms:[["Chloroplast","The part of the plant cell where photosynthesis happens."],["Chlorophyll","The green pigment that absorbs light."],["Light reactions","Use light to split water and make energy carriers (ATP, NADPH)."],["Calvin cycle","Uses those carriers to turn CO₂ into glucose."]],qs:[["Where does photosynthesis take place?","In the chloroplasts, mainly in leaf cells."],["Which gas is released as a by-product?","Oxygen, from the splitting of water."],["What does the Calvin cycle produce?","Glucose (sugar) made from carbon dioxide."]]},
+"Economics":{title:"Supply and demand",summary:"Prices are set by the meeting point of what buyers want (demand) and what sellers offer (supply). When either side changes, the price moves to a new balance.",simple:"If a concert has 1,000 seats and 5,000 people want tickets, prices rise until only about 1,000 people are willing to pay. If a second show is added, supply grows and prices fall back.",terms:[["Demand","How much buyers want at each price. Higher price, lower demand."],["Supply","How much sellers offer at each price. Higher price, more supply."],["Equilibrium","The price where supply equals demand."],["Shortage","Demand is higher than supply at the current price."]],qs:[["What happens to price when demand rises and supply stays the same?","The price goes up."],["What is equilibrium?","The price and quantity where supply equals demand."],["What causes a shortage?","A price set below equilibrium, so buyers want more than sellers offer."]]}
+};
+var GENERIC={title:"",summary:"This lecture introduces the main ideas of the topic and shows how they connect. The AI would condense the slides or transcript into a few clear points.",simple:"In the real product, this part rewrites the lecture in everyday language with one simple example, so you understand the idea before memorizing the details.",terms:[["Key term 1","A short, plain definition taken from your lecture."],["Key term 2","Another important concept, explained simply."],["Key term 3","How the concepts relate to each other."]],qs:[["What is the main idea of this lecture?","The AI writes the answer from your material."],["Give one example from the lecture.","The AI points to an example in your file."]]};
+var folders=[{name:"Computer Science",items:[]},{name:"Biology",items:[]},{name:"Economics",items:[]}];
+var cur=0,busy=false,timer=null;
+var ICON='<svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>';
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function renderSide(){
+  var h="";
+  folders.forEach(function(f,i){
+    h+='<div class="folder'+(i===cur?' open':'')+'"><button class="fbtn'+(i===cur?' on':'')+'" data-f="'+i+'">'+ICON+'<span>'+esc(f.name)+'</span><span class="n">'+f.items.length+'</span></button><div class="items">';
+    f.items.forEach(function(it,j){h+='<button class="item" data-f="'+i+'" data-i="'+j+'" title="'+esc(it.title)+'">'+esc(it.title)+'</button>'});
+    h+='</div></div>';
+  });
+  document.getElementById("folders").innerHTML=h;
+}
+function renderUpload(){
+  var f=folders[cur];
+  document.getElementById("view").innerHTML=
+  '<h1>'+esc(f.name)+'</h1><p class="sub">Add a lecture and get a short, plain-language explanation plus practice questions.</p>'+
+  '<div class="drop" id="drop"><p><strong>Drop a lecture file here</strong></p><p class="hint">Slides (PDF, PPTX), video (MP4) or audio (MP3, M4A)</p>'+
+  '<div class="row"><button class="btn" id="pick">Choose file</button><button class="btn ghost" id="demo">Try a sample lecture</button></div>'+
+  '<input type="file" id="file" hidden accept=".pdf,.ppt,.pptx,video/*,audio/*"></div>'+
+  '<p class="note">Prototype: the explanation shown is a pre-written demo. A real version sends your file to an AI model (Claude or Gemini) and shows its answer here.</p>';
+  var drop=document.getElementById("drop"),file=document.getElementById("file");
+  document.getElementById("pick").onclick=function(){file.click()};
+  document.getElementById("demo").onclick=function(){analyze(null)};
+  file.onchange=function(){if(file.files[0])analyze(file.files[0])};
+  ["dragenter","dragover"].forEach(function(e){drop.addEventListener(e,function(ev){ev.preventDefault();drop.classList.add("over")})});
+  ["dragleave","drop"].forEach(function(e){drop.addEventListener(e,function(ev){ev.preventDefault();drop.classList.remove("over")})});
+  drop.addEventListener("drop",function(ev){var d=ev.dataTransfer.files[0];if(d)analyze(d)});
+}
+function analyze(file){
+  if(busy)return;busy=true;
+  var f=folders[cur],base=SAMPLES[f.name]||GENERIC;
+  var title=file?file.name.replace(/\.[^.]+$/,""):(base.title||"Sample lecture");
+  var steps=["Reading your file","Finding the main topics","Writing a simple explanation","Preparing practice questions"],n=0;
+  var v=document.getElementById("view");
+  v.innerHTML='<h1>'+esc(title)+'</h1><p class="target">Saving to <b>'+esc(f.name)+'</b></p><div class="prog"><div>Analyzing…</div><div class="bar"><i id="pb"></i></div><ul class="steps" id="st">'+steps.map(function(s){return '<li>'+s+'</li>'}).join("")+'</ul></div>';
+  timer=setInterval(function(){
+    var li=document.querySelectorAll("#st li");
+    if(li[n])li[n].classList.add("done");
+    n++;document.getElementById("pb").style.width=(n/steps.length*100)+"%";
+    if(n>steps.length){clearInterval(timer);busy=false;
+      var item={title:title,data:base};f.items.push(item);renderSide();show(cur,f.items.length-1)}
+  },650);
+}
+function show(fi,ii){
+  cur=fi;renderSide();
+  var f=folders[fi],it=f.items[ii],d=it.data;
+  var h='<div class="bar-top"><span class="target" style="margin:0">'+esc(f.name)+'</span><button class="btn ghost" id="again">Add another lecture</button></div><div class="res"><h1>'+esc(it.title)+'</h1>';
+  h+='<h2>In short</h2><p>'+esc(d.summary)+'</p>';
+  h+='<h2>Explained simply</h2><div class="box"><p style="margin:0">'+esc(d.simple)+'</p></div>';
+  h+='<h2>Key terms</h2><dl class="box">'+d.terms.map(function(t){return '<dt>'+esc(t[0])+'</dt><dd>'+esc(t[1])+'</dd>'}).join("")+'</dl>';
+  h+='<h2>Check yourself</h2><div class="box">'+d.qs.map(function(q){return '<div class="q"><div>'+esc(q[0])+'</div><div class="a">'+esc(q[1])+'</div><button type="button">Show answer</button></div>'}).join("")+'</div>';
+  h+='<p class="note">Demo content. In the full product this is written by AI from your own lecture.</p></div>';
+  var v=document.getElementById("view");v.innerHTML=h;
+  document.getElementById("again").onclick=renderUpload;
+  v.querySelectorAll(".q button").forEach(function(b){b.onclick=function(){var q=b.parentNode;q.classList.toggle("show");b.textContent=q.classList.contains("show")?"Hide answer":"Show answer"}});
+  v.parentNode.scrollTop=0;
+}
+document.getElementById("folders").addEventListener("click",function(e){
+  var it=e.target.closest(".item");
+  if(it){show(+it.dataset.f,+it.dataset.i);return}
+  var fb=e.target.closest(".fbtn");
+  if(fb){cur=+fb.dataset.f;renderSide();renderUpload()}
+});
+document.getElementById("newForm").addEventListener("submit",function(e){
+  e.preventDefault();var i=document.getElementById("newName"),n=i.value.trim();
+  if(!n)return;folders.push({name:n,items:[]});cur=folders.length-1;i.value="";renderSide();renderUpload();
+});
+renderSide();renderUpload();
+</script>
+</body>
+</html>
